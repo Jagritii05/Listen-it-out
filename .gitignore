@@ -1,0 +1,29 @@
+# Environment and secrets
+.env
+.env.local
+
+# Virtual environments
+deepagentenv/
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Piper / TTS cache
+piper_voices/
+.tmp_podcast_audio/
+
+# Generated audio (optional — remove if you want to track outputs)
+research_podcast_*.wav
+smoke.wav
+concat_test.wav
+
+# Test / scratch dirs from local runs
+piper_voice_smoke/
+piper_voices_test/
+piper_voices_test_run/
