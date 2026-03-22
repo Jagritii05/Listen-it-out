@@ -1,0 +1,217 @@
+﻿.\deepagentenv\Scripts\python
+.exe : C:\Users\riti3\OneDriv
+e\Desktop\Deep research 
+agent\run_true_agent.py:95: 
+LangGraphDeprecatedSinceV10: 
+create_react_agent has been 
+moved to `langchain.agents`. 
+Please update your import to 
+`from langchain.agents 
+import create_agent`. 
+Deprecated in LangGraph V1.0 
+to be removed in V2.0.
+At line:1 char:1
++ .\deepagentenv\Scripts\pyth
+on.exe run_true_agent.py 
+2>&1 | Out-File - ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo           
+   : NotSpecified: (C:\User  
+  s\riti3\...emoved in V2.   
+ 0.:String) [], RemoteExc    
+eption
+    + FullyQualifiedErrorId  
+   : NativeCommandError
+ 
+  true_agent = 
+create_react_agent(llm, 
+tools)
+============================================================
+≡ƒñû STARTING TRUE AUTONOMOUS AGENT ALERTS
+============================================================
+USER REQUEST: I need to know what 'Agentic Workflows' are in AI. First search the web for it. Then formulate a nice summary for me. Do NOT scrape youtube.
+
+Traceback (most recent call 
+last):
+  File "C:\Users\riti3\OneDri
+ve\Desktop\Deep research 
+agent\run_true_agent.py", 
+line 120, in <module>
+    main()
+  File "C:\Users\riti3\OneDri
+ve\Desktop\Deep research 
+agent\run_true_agent.py", 
+line 106, in main
+    for s in true_agent.strea
+m({"messages": [("user", 
+user_prompt)]}):
+  File "C:\Users\riti3\OneDri
+ve\Desktop\Deep research agen
+t\deepagentenv\Lib\site-packa
+ges\langgraph\pregel\main.py"
+, line 2725, in stream
+    for _ in runner.tick(
+  File "C:\Users\riti3\OneDri
+ve\Desktop\Deep research agen
+t\deepagentenv\Lib\site-packa
+ges\langgraph\pregel\_runner.
+py", line 167, in tick
+    run_with_retry(
+  File "C:\Users\riti3\OneDri
+ve\Desktop\Deep research agen
+t\deepagentenv\Lib\site-packa
+ges\langgraph\pregel\_retry.p
+y", line 96, in 
+run_with_retry
+    return 
+task.proc.invoke(task.input, 
+config)
+           ^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^
+  File "C:\Users\riti3\OneDri
+ve\Desktop\Deep research agen
+t\deepagentenv\Lib\site-packa
+ges\langgraph\_internal\_runn
+able.py", line 656, in invoke
+    input = 
+context.run(step.invoke, 
+input, config, **kwargs)
+            ^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^
+  File "C:\Users\riti3\OneDri
+ve\Desktop\Deep research agen
+t\deepagentenv\Lib\site-packa
+ges\langgraph\_internal\_runn
+able.py", line 393, in invoke
+    ret = 
+context.run(self.func, 
+*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\riti3\OneDri
+ve\Desktop\Deep research agen
+t\deepagentenv\Lib\site-packa
+ges\langgraph\prebuilt\chat_a
+gent_executor.py", line 679, 
+in call_model
+    response = 
+cast(AIMessage, static_model.
+invoke(model_input, config)) 
+ # type: ignore[union-attr]
+                             
+  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^
+  File "C:\Users\riti3\OneDri
+ve\Desktop\Deep research agen
+t\deepagentenv\Lib\site-packa
+ges\langchain_core\runnables\
+base.py", line 3157, in 
+invoke
+    input_ = 
+context.run(step.invoke, 
+input_, config)
+             ^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\riti3\OneDri
+ve\Desktop\Deep research agen
+t\deepagentenv\Lib\site-packa
+ges\langchain_core\runnables\
+base.py", line 5695, in 
+invoke
+    return self.bound.invoke(
+           ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\riti3\OneDri
+ve\Desktop\Deep research agen
+t\deepagentenv\Lib\site-packa
+ges\langchain_core\language_m
+odels\chat_models.py", line 
+402, in invoke
+    self.generate_prompt(
+  File "C:\Users\riti3\OneDri
+ve\Desktop\Deep research agen
+t\deepagentenv\Lib\site-packa
+ges\langchain_core\language_m
+odels\chat_models.py", line 
+1149, in generate_prompt
+    return self.generate(prom
+pt_messages, stop=stop, 
+callbacks=callbacks, 
+**kwargs)
+           ^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\riti3\OneDri
+ve\Desktop\Deep research agen
+t\deepagentenv\Lib\site-packa
+ges\langchain_core\language_m
+odels\chat_models.py", line 
+958, in generate
+    
+self._generate_with_cache(
+  File "C:\Users\riti3\OneDri
+ve\Desktop\Deep research agen
+t\deepagentenv\Lib\site-packa
+ges\langchain_core\language_m
+odels\chat_models.py", line 
+1261, in _generate_with_cache
+    result = self._generate(
+             ^^^^^^^^^^^^^^^
+  File "C:\Users\riti3\OneDri
+ve\Desktop\Deep research agen
+t\deepagentenv\Lib\site-packa
+ges\langchain_groq\chat_model
+s.py", line 621, in _generate
+    response = self.client.cr
+eate(messages=message_dicts, 
+**params)
+               ^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^
+  File "C:\Users\riti3\OneDri
+ve\Desktop\Deep research agen
+t\deepagentenv\Lib\site-packa
+ges\groq\resources\chat\compl
+etions.py", line 461, in 
+create
+    return self._post(
+           ^^^^^^^^^^^
+  File "C:\Users\riti3\OneDri
+ve\Desktop\Deep research agen
+t\deepagentenv\Lib\site-packa
+ges\groq\_base_client.py", 
+line 1242, in post
+    return cast(ResponseT, 
+self.request(cast_to, opts, 
+stream=stream, 
+stream_cls=stream_cls))
+                           ^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^
+  File "C:\Users\riti3\OneDri
+ve\Desktop\Deep research agen
+t\deepagentenv\Lib\site-packa
+ges\groq\_base_client.py", 
+line 1044, in request
+    raise self._make_status_e
+rror_from_response(err.respon
+se) from None
+groq.BadRequestError: Error 
+code: 400 - {'error': 
+{'message': 'The model 
+`llama3-70b-8192` has been 
+decommissioned and is no 
+longer supported. Please 
+refer to https://console.groq
+.com/docs/deprecations for a 
+recommendation on which 
+model to use instead.', 
+'type': 
+'invalid_request_error', 
+'code': 
+'model_decommissioned'}}
+During task with name 
+'agent' and id '1bdeb601-bc05
+-dc66-295a-dd43d6f42ce3'

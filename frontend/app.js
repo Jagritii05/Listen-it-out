@@ -3,32 +3,7 @@
    ══════════════════════════════════════════════════════════════════ */
 
 // ── Step definitions (mirrors server.py STEP_META order) ────────────────────
-const STEPS = [
-  {
-    id: "search_research",
-    label: "Web Research",
-    icon: "🔍",
-    desc: "Searching DuckDuckGo + scraping pages",
-  },
-  {
-    id: "analyze_video",
-    label: "Video Analysis",
-    icon: "🎬",
-    desc: "Extracting & summarizing YouTube transcript",
-  },
-  {
-    id: "create_report",
-    label: "Generating Report",
-    icon: "📄",
-    desc: "Synthesizing research into a full report",
-  },
-  {
-    id: "create_podcast",
-    label: "Creating Podcast",
-    icon: "🎙️",
-    desc: "Writing dialogue + rendering audio with Piper",
-  },
-];
+const STEPS = [];
 
 // ── State ────────────────────────────────────────────────────────────────────
 const state = {
@@ -54,20 +29,39 @@ const errorToast = document.getElementById("error-toast");
 const errorMessage = document.getElementById("error-message");
 const toastClose = document.getElementById("toast-close");
 
-// ── Build step cards ─────────────────────────────────────────────────────────
+// ── Fixed pipeline phases shown to user (regardless of how many tool calls happen)
+const PHASE_CARDS = [
+  { id: "phase_research",  label: "Researching",       icon: "🔍", desc: "Searching the web and gathering source material" },
+  { id: "phase_report",   label: "Generating Report",  icon: "📄", desc: "Synthesizing findings into a structured report" },
+  { id: "phase_podcast",  label: "Creating Podcast",   icon: "🎙️", desc: "Writing script and rendering audio with Piper TTS" },
+];
+
+// Map each tool name to the phase card it belongs to
+// create_report_and_podcast handles both report + podcast internally
+const TOOL_TO_PHASE = {
+  search_the_web:             "phase_research",
+  read_youtube_transcript:    "phase_research",
+  synthesize_final_report:    "phase_report",      // legacy fallback
+  generate_podcast_audio:     "phase_podcast",     // legacy fallback
+  create_report_and_podcast:  "phase_report",      // new combined tool starts at report phase
+};
+
 function buildStepCards() {
   stepsGrid.innerHTML = "";
-  STEPS.forEach((step) => {
-    state.stepStatus[step.id] = "idle";
+  STEPS.length = 0;
+  state.stepStatus = {};
+
+  PHASE_CARDS.forEach(phase => {
+    STEPS.push({ id: phase.id, label: phase.label, icon: phase.icon });
+    state.stepStatus[phase.id] = "idle";
 
     const card = document.createElement("div");
     card.className = "step-card";
-    card.id = `step-card-${step.id}`;
+    card.id = `step-card-${phase.id}`;
     card.dataset.status = "idle";
-
     card.innerHTML = `
       <div class="step-icon-row">
-        <span class="step-emoji" aria-hidden="true">${step.icon}</span>
+        <span class="step-emoji" aria-hidden="true">${phase.icon}</span>
         <span class="step-status-icon" aria-label="Status">
           <span class="step-spinner" aria-hidden="true"></span>
           <svg class="step-check" viewBox="0 0 18 18" fill="none" aria-hidden="true">
@@ -76,18 +70,17 @@ function buildStepCards() {
           </svg>
         </span>
       </div>
-      <div class="step-name">${step.label}</div>
-      <div class="step-desc">${step.desc}</div>
+      <div class="step-name">${phase.label}</div>
+      <div class="step-desc">${phase.desc}</div>
       <div class="thinking-indicator" aria-live="polite">
-        <span class="thinking-label">Thinking</span>
-        <div class="thinking-dots" aria-hidden="true">
-          <span></span><span></span><span></span>
-        </div>
+        <span class="thinking-label">Working</span>
+        <div class="thinking-dots" aria-hidden="true"><span></span><span></span><span></span></div>
       </div>
     `;
-
     stepsGrid.appendChild(card);
   });
+
+  updateProgressBar();
 }
 
 // ── Update a single step card ─────────────────────────────────────────────────
@@ -96,7 +89,6 @@ function setStepStatus(stepId, status) {
   const card = document.getElementById(`step-card-${stepId}`);
   if (card) {
     card.dataset.status = status;
-    // Update aria-label for accessibility
     const statusLabels = { idle: "Pending", active: "In Progress", done: "Complete" };
     card.setAttribute("aria-label", `${STEPS.find(s => s.id === stepId)?.label} — ${statusLabels[status] || status}`);
   }
@@ -106,7 +98,8 @@ function setStepStatus(stepId, status) {
 // ── Progress bar ──────────────────────────────────────────────────────────────
 function updateProgressBar() {
   const doneCount = Object.values(state.stepStatus).filter((s) => s === "done").length;
-  const pct = Math.round((doneCount / STEPS.length) * 100);
+  const total = STEPS.length;
+  const pct = total === 0 ? 0 : Math.round((doneCount / total) * 100);
   progressBar.style.width = `${pct}%`;
   progressLabel.textContent = `${pct}%`;
 }
@@ -271,24 +264,38 @@ async function startResearch() {
 function handleSSEEvent(eventType, data) {
   switch (eventType) {
     case "step_start": {
-      const stepId = data.step;
-      // Mark all previous steps done if they were still active
-      STEPS.forEach((s) => {
-        if (state.stepStatus[s.id] === "active") {
-          setStepStatus(s.id, "done");
-        }
-      });
-      setStepStatus(stepId, "active");
+      // Map the tool name to its phase card
+      const toolName = data.step?.replace("tool_", "") || data.label?.replace("Using Tool: ", "");
+      const phaseId = TOOL_TO_PHASE[toolName] || "phase_research";
 
-      // Scroll the active card into view smoothly
-      const card = document.getElementById(`step-card-${stepId}`);
-      if (card) card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      // Only mark the phase active if it isn't done yet
+      if (state.stepStatus[phaseId] !== "done") {
+        // Mark all earlier phases done if this is a later phase
+        PHASE_CARDS.forEach((p) => {
+          if (p.id !== phaseId && state.stepStatus[p.id] === "active") {
+            setStepStatus(p.id, "done");
+          }
+        });
+        setStepStatus(phaseId, "active");
+        const card = document.getElementById(`step-card-${phaseId}`);
+        if (card) card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
       break;
     }
 
     case "step_done": {
-      const stepId = data.step;
-      setStepStatus(stepId, "done");
+      // step id might be tool_call_id (old) or tool_name — resolve to phase either way
+      const rawId = data.step || "";
+      const toolName = rawId.startsWith("tool_") ? rawId.slice(5) : rawId;
+      const phaseId = TOOL_TO_PHASE[toolName];
+      if (phaseId) {
+        // Only mark done if the next phase has started (don't close research while still searching)
+        const phaseIdx = PHASE_CARDS.findIndex(p => p.id === phaseId);
+        const nextPhase = PHASE_CARDS[phaseIdx + 1];
+        if (!nextPhase || state.stepStatus[nextPhase.id] === "active" || state.stepStatus[nextPhase.id] === "done") {
+          setStepStatus(phaseId, "done");
+        }
+      }
       break;
     }
 
