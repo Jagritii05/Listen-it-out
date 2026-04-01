@@ -1,42 +1,30 @@
-# Deep research agent
+# Listen-it-out
 
-LangGraph workflow that:
+An autonomous research system built with **LangGraph** that performs deep-dive investigations by synthesizing web search data and YouTube video insights into comprehensive reports and professional podcast scripts.
 
-1. **Web research** — DuckDuckGo + page excerpts, summarized with **Groq**
-2. **Video “analysis”** — YouTube **transcript** + Groq summary
-3. **Report** — Groq merges search + video insights
-4. **Podcast** — Groq dialogue script + **Piper** (local) text-to-speech to `.wav`
+The agent operates in a fully autonomous loop, determining when to search the web, when to analyze video transcripts, and how to combine these multi-modal sources into a high-quality final package including an audio podcast generated via local text-to-speech.
 
-## Setup
+## Core Features
 
-1. Python 3.11+
-2. Create a virtual environment and install dependencies:
+- **Autonomous Research Workflow**: Orchestrated by LangGraph to handle search, analysis, and synthesis without manual intervention.
+- **Multi-Modal Data Gathering**: 
+  - **Web Research**: Parallelized DuckDuckGo searching with automated page excerpt extraction.
+  - **Video Analysis**: YouTube transcript extraction with metadata fallback (via `yt-dlp`).
+- **High-Quality Synthesis**:
+  - **Comprehensive Reports**: Markdown-formatted deep dives optimized for readability and technical depth.
+  - **Podcast Generation**: Dynamic, natural-sounding dialogue scripts between two characters (Mike & Dr. Sarah).
+- **Local Audio Synthesis**: High-performance, offline text-to-speech using **Piper TTS**.
+- **Modern Web Interface**: FastAPI-powered backend with a real-time streaming frontend to visualize the agent's "thinking" process.
 
-   ```bash
-   pip install -e .
-   ```
+## Architecture
 
-3. Copy `.env.example` to `.env` (or create `.env`) and set:
+The system supports two primary modes:
+1.  **StateGraph (Standard)**: A predefined research flow for consistent, structured output.
+2.  **ReAct Agent (Autonomous)**: A more flexible agent (in `run_true_agent.py`) that uses tools to gather information and generate reports based on the user's research objective.
 
-   - `GROQ_API_KEY` — required for all LLM steps
 
-4. Run locally (one-shot test):
+```
 
-   ```bash
-   # from project root, with venv activated
-   pip install -e .
-   python run_once.py
-   ```
 
-   This loads `.env`, runs the full graph (search → video → report → podcast + WAV), and prints the final outputs.
 
-5. Or run the LangGraph dev server with [LangGraph CLI](https://github.com/langchain-ai/langgraph) using `langgraph.json`.
 
-## Optional: Gemini helpers
-
-`agent/utils.py` contains **legacy** Gemini helpers. They are not used by the main graph. To use them, install `google-genai` and set `GEMINI_API_KEY`.
-
-## Security
-
-- Never commit `.env` or API keys. Add `.env` to `.gitignore`.
-- If a key was ever shared, rotate it in the provider dashboard.

@@ -1,7 +1,7 @@
 [project]
-name = "mutli-modal-researcher"
+name = "listen-it-out"
 version = "0.0.1"
-description = "Multi-modal researcher (Groq + Piper; optional Gemini helpers)"
+description = "Autonomous research agent that synthesizes web and YouTube data into reports and podcasts"
 authors = [
     { name = "Lance Martin", email = "lance@langchain.dev" },
 ]
@@ -11,15 +11,12 @@ requires-python = ">=3.11,<4.0"
 dependencies = [
     "langgraph>=0.2.6",
     "langchain>=0.3.19",
-    "langchain-google-genai",
     "langchain-groq",
     "python-dotenv>=1.0.1",
     "langgraph-sdk>=0.1.57",
     "langgraph-cli",
     "langgraph-api",
     "fastapi",
-    "google-genai",
-    "rich",
     "duckduckgo_search",
     "requests",
     "beautifulsoup4",

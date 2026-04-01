@@ -13,7 +13,7 @@ from langgraph.prebuilt import create_react_agent
 from langchain_groq import ChatGroq
 
 
-# ── Tool 1: Parallel Web Search ───────────────────────────────────────────────
+# Tool 1: Parallel Web Search 
 @tool
 def search_the_web(queries: str) -> str:
     """Search the internet for information on a topic.

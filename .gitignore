@@ -27,3 +27,7 @@ concat_test.wav
 piper_voice_smoke/
 piper_voices_test/
 piper_voices_test_run/
+
+# Debug / error logs
+error.txt
+*.log
