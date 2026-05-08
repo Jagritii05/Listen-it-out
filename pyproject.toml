@@ -17,6 +17,7 @@ dependencies = [
     "langgraph-cli",
     "langgraph-api",
     "fastapi",
+    "uvicorn",
     "duckduckgo_search",
     "requests",
     "beautifulsoup4",
