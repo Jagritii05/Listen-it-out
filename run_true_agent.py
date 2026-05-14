@@ -219,13 +219,7 @@ Return ONLY the raw dialogue.
 
     try:
         m_onnx = ensure_voice("en_US-lessac-medium")
-        mike_voice = PiperVoice.load(m_onnx, config_path=Path(str(m_onnx) + ".json") if Path(str(m_onnx) + ".json").exists() else None)
-
         s_onnx = ensure_voice("en_US-amy-medium")
-        try:
-            sarah_voice = PiperVoice.load(s_onnx, config_path=Path(str(s_onnx) + ".json") if Path(str(s_onnx) + ".json").exists() else None)
-        except Exception:
-            sarah_voice = mike_voice
     except Exception as e:
         return f"REPORT_TEXT||{report_text}||PODCAST_SCRIPT_ONLY||{podcast_script}||voice_error:{e}"
 
@@ -250,12 +244,37 @@ Return ONLY the raw dialogue.
 
     synth_paths = []
     try:
+        import gc
+        
+        # Load and synthesize Mike's lines
+        mike_voice = PiperVoice.load(m_onnx, config_path=Path(str(m_onnx) + ".json") if Path(str(m_onnx) + ".json").exists() else None)
         for i, (speaker, text) in enumerate(segments, start=1):
-            voice = mike_voice if speaker == "mike" else sarah_voice
-            seg = tmp_dir / f"seg_{i:04d}.wav"
-            with wave.open(str(seg), "wb") as wf:
-                voice.synthesize_wav(text, wf)
-            synth_paths.append(seg)
+            if speaker == "mike":
+                seg = tmp_dir / f"seg_{i:04d}.wav"
+                with wave.open(str(seg), "wb") as wf:
+                    mike_voice.synthesize_wav(text, wf)
+        
+        # Free memory before loading Sarah
+        del mike_voice
+        gc.collect()
+        
+        # Load and synthesize Sarah's lines
+        try:
+            sarah_voice = PiperVoice.load(s_onnx, config_path=Path(str(s_onnx) + ".json") if Path(str(s_onnx) + ".json").exists() else None)
+        except Exception:
+            sarah_voice = PiperVoice.load(m_onnx, config_path=Path(str(m_onnx) + ".json") if Path(str(m_onnx) + ".json").exists() else None)
+            
+        for i, (speaker, text) in enumerate(segments, start=1):
+            if speaker == "sarah":
+                seg = tmp_dir / f"seg_{i:04d}.wav"
+                with wave.open(str(seg), "wb") as wf:
+                    sarah_voice.synthesize_wav(text, wf)
+                    
+        del sarah_voice
+        gc.collect()
+
+        # Recombine all segments in order
+        synth_paths = [tmp_dir / f"seg_{i:04d}.wav" for i in range(1, len(segments) + 1)]
 
         with wave.open(str(synth_paths[0]), "rb") as wf0:
             params = wf0.getparams()
